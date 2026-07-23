@@ -1,4 +1,4 @@
-const navLinks = document.querySelectorAll('.ul-list li a');
+const navLinks = document.querySelectorAll('.ul-list li a[href^="#"]');
 const sections = document.querySelectorAll('section');
 
 function removeActive() {
@@ -23,34 +23,29 @@ navLinks.forEach(link => {
 
 window.addEventListener('scroll', () => {
   let scrollPos = window.scrollY + 100;
+  const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 5;
 
-  sections.forEach(section => {
-    if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
-      removeActive();
-      const activeLink = document.querySelector(`.ul-list li a[href="#${section.id}"]`);
-      if (activeLink) activeLink.parentElement.classList.add('active');
-    }
-  });
+  if (isAtBottom) {
+    removeActive();
+    const lastSection = sections[sections.length - 1];
+    const activeLink = document.querySelector(`.ul-list li a[href="#${lastSection.id}"]`);
+    if (activeLink) activeLink.parentElement.classList.add('active');
+  } else {
+    sections.forEach(section => {
+      if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
+        removeActive();
+        const activeLink = document.querySelector(`.ul-list li a[href="#${section.id}"]`);
+        if (activeLink) activeLink.parentElement.classList.add('active');
+      }
+    });
+  }
 
   if(window.scrollY > 500){
     backToTop.style.display = "flex";
   } else {
     backToTop.style.display = "none";
   }
-
-  revealElements.forEach(el => {
-    const windowHeight = window.innerHeight;
-    const elementTop = el.getBoundingClientRect().top;
-    const revealPoint = 150;
-
-    if(elementTop < windowHeight - revealPoint){
-      el.classList.add('active-reveal');
-    }
-  });
 });
-
-const revealElements = document.querySelectorAll('.home-container, .about-container, .projects-container, .services-container, .contact-content');
-revealElements.forEach(el => el.classList.add('reveal'));
 
 const backToTop = document.createElement('div');
 backToTop.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
@@ -145,3 +140,29 @@ document.addEventListener('DOMContentLoaded', type);
 //     mainPage.classList.add("visible");
 //   }, 4000);
 // });
+
+/* Scroll-triggered reveal animations (replay both directions) */
+const revealSections = document.querySelectorAll('.home-container, .about-container, .projects-container, .services-container, .contact-content');
+revealSections.forEach(el => el.classList.add('reveal'));
+
+const staggerGroups = document.querySelectorAll('.projects-container, .services-container, .card');
+staggerGroups.forEach(group => {
+  const items = group.querySelectorAll('.project-card, .service-card, .c1');
+  items.forEach((item, index) => {
+    item.classList.add('reveal-item');
+    item.style.transitionDelay = `${index * 0.15}s`;
+  });
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active-reveal');
+    } else {
+      entry.target.classList.remove('active-reveal');
+    }
+  });
+}, { threshold: 0.15 });
+
+revealSections.forEach(el => observer.observe(el));
+document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el));

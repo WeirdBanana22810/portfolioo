@@ -660,10 +660,10 @@ hr {
   color: #aaa;
 }
 
-.reveal {
+.reveal, .reveal-item {
   opacity: 0;
   transform: translateY(40px);
-  transition: all 0.6s ease-out;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
 .active-reveal {
@@ -876,5 +876,38 @@ body {
 
   html, body {
     overflow-x: hidden;
+  }
+}
+
+.resume-ribbon {
+  position: fixed;
+  top: 25px;
+  left: -55px;
+  transform: rotate(-45deg);
+  background: linear-gradient(135deg, #5c5ff5, #3538c9);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 60px;
+  z-index: 1001;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(71, 74, 240, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.resume-ribbon:hover {
+  transform: rotate(-45deg) scale(1.1);
+  box-shadow: 0 6px 18px rgba(71, 74, 240, 0.55);
+}
+
+@media (max-width: 768px) {
+  .resume-ribbon {
+    font-size: 10px;
+    padding: 6px 50px;
+    top: 18px;
+    left: -60px;
   }
 }
