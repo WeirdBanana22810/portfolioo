@@ -43,6 +43,7 @@ window.addEventListener('scroll', () => {
   if(window.scrollY > 500){
     backToTop.style.display = "flex";
   } else {
+    
     backToTop.style.display = "none";
   }
 });
@@ -166,3 +167,44 @@ const observer = new IntersectionObserver((entries) => {
 
 revealSections.forEach(el => observer.observe(el));
 document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el));
+
+/* Jelly-style squash-and-stretch cursor */
+const cursorDot = document.querySelector('.cursor-dot');
+
+const blob = document.createElement('div');
+blob.className = 'cursor-blob';
+document.body.appendChild(blob);
+
+let mouseX = 0, mouseY = 0;
+let blobX = 0, blobY = 0;
+let prevX = 0, prevY = 0;
+
+window.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  cursorDot.style.left = mouseX + 'px';
+  cursorDot.style.top = mouseY + 'px';
+});
+
+function animateBlob() {
+  blobX += (mouseX - blobX) * 0.2;
+  blobY += (mouseY - blobY) * 0.2;
+
+  const vx = blobX - prevX;
+  const vy = blobY - prevY;
+  const speed = Math.min(Math.hypot(vx, vy), 30);
+  const angle = Math.atan2(vy, vx) * (180 / Math.PI);
+
+  const stretch = 1 + speed * 0.04;
+  const squash = 1 - speed * 0.015;
+
+  blob.style.left = blobX + 'px';
+  blob.style.top = blobY + 'px';
+  blob.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(${stretch}, ${squash})`;
+
+  prevX = blobX;
+  prevY = blobY;
+
+  requestAnimationFrame(animateBlob);
+}
+animateBlob();
